@@ -6,10 +6,8 @@ from .models import Book
 def home(request):
     return render(request, "home.html")
 
-
-def books(request):
-    items = Book.objects.all()
-    return render(request, "books.html", {"books": items})
+def about(request):
+    return render(request, "about.html")
 
 
 def book_detail(request, book_id):
@@ -28,7 +26,7 @@ def book_detail(request, book_id):
         context['cart'] = request.user.get_cart()
     return render(request, 'book_detail.html', context)
 
-
+from django.core.paginator import Paginator
 
 def book_list(request):
     books = Book.objects.all()
@@ -42,10 +40,21 @@ def book_list(request):
             Q(publisher__name__icontains=query) | # Search through publisher name
             Q(subjects__name__icontains=query)
         ).distinct()  # Remove duplicates from joins
-    
+
+
+    paginator = Paginator(books, 20)  
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    print(f"Total books: {paginator.count}")
+    print(f"Number of pages: {paginator.num_pages}")
+    print(f"Current page: {page_obj.number}")
+
     return render(request, 'books.html', {
-        'books': books,
-        'query': query
+        'page_obj': page_obj,
+        'books': page_obj,
+        'query': query,
+        
     })
 
 
