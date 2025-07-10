@@ -11,10 +11,10 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('ajax/add-to-cart/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
-    path('cart/remove/<int:book_id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('list/remove/<int:book_id>/', views.remove_from_wishlist, name='remove_from_wishlist')
+    path('ajax/add-to-wishlist/', views.add_to_wishlist_ajax, name='add_to_wishlist_ajax'),
+    path('ajax/remove-from-cart/', views.remove_from_cart_ajax, name='remove_from_cart_ajax'),
+    path('ajax/remove-from-wishlist/', views.remove_from_wishlist_ajax, name='remove_from_wishlist_ajax')
 ]
-
 
 
 # urlpatterns = [

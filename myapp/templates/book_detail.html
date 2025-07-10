@@ -38,10 +38,10 @@
                 <p class="price">${{ book.cost|floatformat:2}} 
 
                 <div class="d-grid gap-2 d-md-block">
-                    <button class="btn btn-primary btn-lg me-2">
+                    <button class="btn btn-primary btn-lg me-2" onclick="addToCart({{ book.id }}, this)">
                         <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                     </button>
-                    <button class="btn btn-outline-danger btn-lg">
+                    <button class="btn btn-outline-danger btn-lg" onclick="addToWishList({{ book.id }}, this)">
                         <i class="fas fa-heart me-2"></i>Wishlist
                     </button>
                 </div>
@@ -98,14 +98,22 @@
   <button class="btn btn-light scroll-btn scroll-right"><i class="fa-solid fa-caret-right"></i></button>
 </div>
 
-<script>
-  const relatedCarousel = document.getElementById('relatedBookCarousel');
-  document.querySelectorAll('.scroll-left')[0].onclick = () => relatedCarousel.scrollBy({ left: -200, behavior: 'smooth' });
-  document.querySelectorAll('.scroll-right')[0].onclick = () => relatedCarousel.scrollBy({ left: 200, behavior: 'smooth' });
-</script>
+    <script>
+    const relatedCarousel = document.getElementById('relatedBookCarousel');
+    document.querySelectorAll('.scroll-left')[0].onclick = () => relatedCarousel.scrollBy({ left: -200, behavior: 'smooth' });
+    document.querySelectorAll('.scroll-right')[0].onclick = () => relatedCarousel.scrollBy({ left: 200, behavior: 'smooth' });
+    </script>
 
 
 
     <script src="{% static 'book_cover.js' %}"></script>
+    <script>
+        const addToCartUrl = "{% url 'add_to_cart_ajax' %}";
+        const removeFromCartUrl = "{% url 'remove_from_cart_ajax' %}";
+        const removeFromWishListUrl = "{% url 'remove_from_wishlist_ajax' %}";
+        const addToWishListUrl = "{% url 'add_to_wishlist_ajax' %}";
+        const csrfToken = "{{ csrf_token }}";
+    </script>
+    <script src="{% static 'dashboard.js' %}"></script>
 
 {% endblock %}

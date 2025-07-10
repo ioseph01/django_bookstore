@@ -20,10 +20,13 @@ def book_detail(request, book_id):
         subjects__in=book.subjects.all()
     ).exclude(id=book.id).distinct()[:15]
 
-    return render(request, 'book_detail.html', {
+    context = {
         'book': book,
-        'related_books': related_books
-    })
+        'related_books': related_books,
+    }
+    if request.user.is_authenticated:
+        context['cart'] = request.user.get_cart()
+    return render(request, 'book_detail.html', context)
 
 
 
@@ -101,6 +104,8 @@ def login_view(request):
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
+from django.http import JsonResponse
+
 
 @require_POST
 @login_required
@@ -109,17 +114,50 @@ def add_to_cart_ajax(request):
     if book_id:
         book = Book.objects.filter(id=book_id).first()
         if book:
+            if book in request.user.shopping_cart.all():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Book is already in cart',
+                    'already_in_cart': True
+                })
             request.user.add_to_cart(book)
             return JsonResponse({'success': True, 'message': 'Added to cart'})
     return JsonResponse({'success': False, 'message': 'Invalid book ID'})
 
-from django.http import JsonResponse
-
+@require_POST
 @login_required
-def add_to_cart(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    request.user.add_to_cart(book)
-    return redirect('dashboard')  # or wherever you want to go after adding
+def add_to_wishlist_ajax(request):
+    book_id = request.POST.get('book_id')
+    if book_id:
+        book = Book.objects.filter(id=book_id).first()
+        if book:
+            request.user.add_to_wishlist(book)
+            return JsonResponse({'success': True, 'message': 'Added to wishlist'})
+    return JsonResponse({'success': False, 'message': 'Invalid book ID'})
+
+@require_POST
+@login_required
+def remove_from_cart_ajax(request):
+    book_id = request.POST.get('book_id')
+    if book_id:
+        book = Book.objects.filter(id=book_id).first()
+        if book:
+            request.user.remove_from_cart(book)
+            return JsonResponse({'success': True, 'message': 'Removed from cart'})
+    return JsonResponse({'success': False, 'message': 'Invalid book ID'})
+
+@require_POST
+@login_required
+def remove_from_wishlist_ajax(request):
+    book_id = request.POST.get('book_id')
+    if book_id:
+        book = Book.objects.filter(id=book_id).first()
+        if book:
+            request.user.remove_from_wishlist(book)
+            return JsonResponse({'success': True, 'message': 'Removed from wishlist'})
+    return JsonResponse({'success': False, 'message': 'Invalid book ID'})
+
+
 
 
 @login_required
@@ -128,14 +166,14 @@ def dashboard_view(request):
     wishlist = request.user.get_wishlist()
     return render(request, "dashboard.html", {'cart': cart, 'wish_list': wishlist})
 
-@login_required
-def remove_from_cart(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    request.user.remove_from_cart(book)
-    return JsonResponse({'success': True})
+# @login_required
+# def remove_from_cart(request, book_id):
+#     book = get_object_or_404(Book, id=book_id)
+#     request.user.remove_from_cart(book)
+#     return JsonResponse({'success': True})
 
-@login_required
-def remove_from_wishlist(request, book_id):
-    book = get_object_or_404(Book, id=book_id)
-    request.user.remove_from_wishlist(book)
-    return JsonResponse({'success': True})
+# @login_required
+# def remove_from_wishlist(request, book_id):
+#     book = get_object_or_404(Book, id=book_id)
+#     request.user.remove_from_wishlist(book)
+#     return JsonResponse({'success': True})
