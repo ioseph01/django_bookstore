@@ -1,0 +1,104 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'book_cover.css' %}"></style>
+    
+
+<h1>Book Library</h1>
+
+<!-- Search Bar -->
+<div class="search-container">
+    <form method="GET" class="search-form">
+        <input 
+            type="text" 
+            name="q" 
+            class="search-input" 
+            placeholder="Search books by title, author, or publisher..." 
+            value="{{ request.GET.q }}"
+            autocomplete="off"
+        >
+        <button type="submit" class="search-btn">Search</button>
+        {% if request.GET.q %}
+            <a href="{% url 'book_list' %}" class="clear-btn">Clear</a>
+        {% endif %}
+    </form>
+    
+    <!-- Advanced Search Filters -->
+    <div class="search-filters">
+        <div class="filter-group">
+            <input type="checkbox" name="title_only" id="title_only" class="filter-checkbox" 
+                   {% if request.GET.title_only %}checked{% endif %}>
+            <label for="title_only">Title only</label>
+        </div>
+        <div class="filter-group">
+            <input type="checkbox" name="author_only" id="author_only" class="filter-checkbox"
+                   {% if request.GET.author_only %}checked{% endif %}>
+            <label for="author_only">Author only</label>
+        </div>
+        <div class="filter-group">
+            <input type="checkbox" name="has_cover" id="has_cover" class="filter-checkbox"
+                   {% if request.GET.has_cover %}checked{% endif %}>
+            <label for="has_cover">Has cover image</label>
+        </div>
+    </div>
+</div>
+
+<!-- Search Results Info -->
+<!-- {% if request.GET.q %}
+    <div class="search-results">
+        <strong>{{ books|length }}</strong> result{{ books|length|pluralize }} found for "<strong>{{ request.GET.q }}</strong>"
+    </div>
+{% endif %} -->
+
+<!-- Book List -->
+<div class="book-list">
+    {% if books %}
+        {% for book in books %}
+        <div class="book-item">
+            <div class="book-cover"><a href="{% url 'book_detail' book.id %}">
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image }}" alt="{{ book.title }} cover">
+                {% else %}
+                    <div class="book-placeholder" data-book-id="{{ book.id }}">
+                        {{book.title}}
+                    </div>
+                {% endif %}
+                </a>
+            </div>
+            
+            <div class="book-details">
+                <h3>
+                    <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'book_detail' book.id %}">
+                    {{ book.title}}
+                    </a>
+                </h3>
+                <p class="authors">
+                    {% if book.authors.all.0.first_name != "Anonymous" %}
+                        by
+                        {% for author in book.authors.all %}
+                            {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+                <p><strong>Publisher:</strong> {{ book.publisher }}</p>
+                <p><strong>Pages:</strong> {{ book.page_count }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-results">
+            {% if request.GET.q %}
+                No books found matching your search.
+            {% else %}
+                No books available.
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script src="{% static 'book_cover.js' %}"></script>
+
+{% endblock %}

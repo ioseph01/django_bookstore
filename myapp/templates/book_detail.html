@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'book_cover.css' %}"></style>
+<link rel="stylesheet" href="{% static 'book_detail.css' %}"></style>
+
+    <div class="main mx-5">
+
+
+        <div class="row mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="product-image">
+                    {% if book.cover_image %}
+                        <img src="{{ book.cover_image }}" data-book-id="{{ book.id }}"
+                         alt="{{ book.title }}" class="book-cover-img">
+                    {% else %}
+                        <div class="book-placeholder" data-book-id="{{ book.id }}">
+                            {{book.title}}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-md-8 product-info">
+                <h1 class="display-5 fw-bold mb-3">{{book.title}}</h1>
+            
+                <p class="authors">
+                    {% if book.authors.all.0.first_name != "Anonymous" %}
+                        
+                        {% for author in book.authors.all %}
+                            {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+                <p><strong>Downloads: </strong>{{ book.downloads|intcomma }}</p>
+                
+                <p class="price">${{ book.cost|floatformat:2}} 
+
+                <div class="d-grid gap-2 d-md-block">
+                    <button class="btn btn-primary btn-lg me-2">
+                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                    </button>
+                    <button class="btn btn-outline-danger btn-lg">
+                        <i class="fas fa-heart me-2"></i>Wishlist
+                    </button>
+                </div>
+
+                <h4 class="price pt-5">Other Info</h4>
+                <div class="book-details">
+                    <p><span class="label">Publisher:</span><span class="value">{{ book.publisher }}</span></p>
+                    <p><span class="label">Pages:</span><span class="value">{{ book.page_count }}</span></p>
+                    <p><span class="label">Language:</span><span class="value">English</span></p>
+                
+
+
+                    {% if book.subjects.all %}
+                    <p><span class="label">Categories:</span><span class="value">    
+                        {% for subject in book.subjects.all %}
+                                {{ subject.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                        </span></p>
+                    {% endif %}      
+                </div>
+                             
+                <div class="pt-5">    
+                    <h4 class="price">About</h4>
+                    
+                    <p>{{ book.summary}}</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<h4 class="mx-5">Related Books</h4>
+<div class="carousel-wrapper mx-5">
+  <button class="btn btn-light scroll-btn scroll-left"><i class="fa-solid fa-caret-left"></i></button>
+  <div class="book-carousel" id="relatedBookCarousel">
+    {% for book in related_books %}
+      <div class="card book-card">
+        <a href="{% url 'book_detail' book.id %}">
+        {% if book.cover_image %}
+          <img src="{{ book.cover_image }}" class="card-img-top book-cover-img" alt="{{ book.title }} data-book-id="{{ book.id }}">
+        {% else %}
+          <div class="book-placeholder" data-book-id="{{ book.id }} ">
+                            {{book.title}}
+                        </div>
+        {% endif %}
+        </a>
+
+      </div>
+    {% empty %}
+      <p>No related books found.</p>
+    {% endfor %}
+  </div>
+  <button class="btn btn-light scroll-btn scroll-right"><i class="fa-solid fa-caret-right"></i></button>
+</div>
+
+<script>
+  const relatedCarousel = document.getElementById('relatedBookCarousel');
+  document.querySelectorAll('.scroll-left')[0].onclick = () => relatedCarousel.scrollBy({ left: -200, behavior: 'smooth' });
+  document.querySelectorAll('.scroll-right')[0].onclick = () => relatedCarousel.scrollBy({ left: 200, behavior: 'smooth' });
+</script>
+
+
+
+    <script src="{% static 'book_cover.js' %}"></script>
+
+{% endblock %}

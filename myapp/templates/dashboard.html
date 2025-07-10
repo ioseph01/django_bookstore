@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <div class="container my-5">
+
+    <h1>Welcome, {{ request.user.username }}!</h1>
+
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Shopping Cart</button>
+        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Wish List</button>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active mx-2 my-4" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+        {% if cart %}
+            <!-- {% for book in cart %}
+                {{ book.title }}
+            {% endfor %} -->
+            {% for book in cart %}
+            <div class="card my-2" id="book-{{ book.id }}">
+              <div class="row">
+                <div class="col-1">
+                  <div class="card-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="removeFromWishList({{ book.id }})"></button>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <div class="card-body">
+                    <h3 class="card-title">${{ book.cost|floatformat:2}}</h3>
+                  </div>
+                </div>
+                <div class="col-9">
+                  <div class="card-body">
+                      <h5 class="card-title">
+                        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'book_detail' book.id %}">
+                          {{ book.title}}
+                        </a>
+                      </h5>
+                      <p class="card-text">
+                      by
+                      {% for author in book.authors.all %}
+                          {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                      </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <span style="color:darkgrey;"><i>Empty Cart</i></span>
+        {% endif %}
+
+        
+    </div>
+    <div class="tab-pane fade mx-2 my-4" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+        {% if wish_list %}
+            <!-- {% for book in wish_list %}
+                {{ book.title }}
+            {% endfor %} -->
+            {% for book in wish_list %}
+            <div class="card my-2" id="book-{{ book.id }}">
+              <div class="row">
+                <div class="col-2 d-flex justify-content-center">
+                  <div class="card-body">
+                    <div class="btn-group-vertical">
+                      
+                          <button onclick="addToCart({{ book.id }})" class="btn btn-outline-primary btn-sm">
+    Add To Cart
+</button>
+                      <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart({{ book.id }})">
+                          Remove
+                      </button>  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <div class="card-body">
+                    <h3 class="card-title">${{ book.cost|floatformat:2}}</h3>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="card-body">
+                      <h5 class="card-title">
+                        <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'book_detail' book.id %}">
+                          {{ book.title}}
+                        </a>
+                      </h5>
+                      <p class="card-text">
+                      by
+                      {% for author in book.authors.all %}
+                          {{ author.first_name }} {{ author.last_name }}{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                      </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <span style="color:darkgrey;"><i>Empty List</i></span>
+        {% endif %}
+    </div>
+  </div>
+
+<script>
+const addToCartUrl = "{% url 'add_to_cart_ajax' %}";
+const csrfToken = "{{ csrf_token }}";
+</script>
+<script src="{% static 'dashboard.js' %}"></script>
+
+{% endblock %}
+
