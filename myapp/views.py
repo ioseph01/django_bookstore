@@ -130,7 +130,24 @@ def add_to_cart_ajax(request):
                     'already_in_cart': True
                 })
             request.user.add_to_cart(book)
-            return JsonResponse({'success': True, 'message': 'Added to cart'})
+            return JsonResponse({
+                'success': True,
+                'message': 'Added to cart',
+                'book': {
+                    'id': book.id,
+                    'title': book.title,
+                    'cost': float(book.cost),  # Ensure it's JSON-serializable
+                    'authors': [
+                        {
+                            'first_name': author.first_name,
+                            'last_name': author.last_name
+                        }
+                        for author in book.authors.all()
+                    ]
+                }
+            })
+
+            # return JsonResponse({'success': True, 'message': 'Added to cart', 'book': book})
     return JsonResponse({'success': False, 'message': 'Invalid book ID'})
 
 @require_POST
@@ -140,8 +157,29 @@ def add_to_wishlist_ajax(request):
     if book_id:
         book = Book.objects.filter(id=book_id).first()
         if book:
+            if book in request.user.wish_list.all():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Book is already in wishlist',
+                    'already_in_wishlist': True
+                })
             request.user.add_to_wishlist(book)
-            return JsonResponse({'success': True, 'message': 'Added to wishlist'})
+            return JsonResponse({
+                'success': True,
+                'message': 'Added to wishlist',
+                'book': {
+                    'id': book.id,
+                    'title': book.title,
+                    'cost': float(book.cost),  # Ensure it's JSON-serializable
+                    'authors': [
+                        {
+                            'first_name': author.first_name,
+                            'last_name': author.last_name
+                        }
+                        for author in book.authors.all()
+                    ]
+                }
+            })
     return JsonResponse({'success': False, 'message': 'Invalid book ID'})
 
 @require_POST
@@ -166,6 +204,23 @@ def remove_from_wishlist_ajax(request):
             return JsonResponse({'success': True, 'message': 'Removed from wishlist'})
     return JsonResponse({'success': False, 'message': 'Invalid book ID'})
 
+
+
+@require_POST
+@login_required
+def clear_wishlist_ajax(request):
+    if request.user.wish_list.exists():
+        request.user.clear_wish_list()
+        return JsonResponse({'success': True, 'message': 'Wishlist cleared.'})
+    return JsonResponse({'success': False, 'message': 'Wishlist was already empty.'})
+
+@require_POST
+@login_required
+def clear_cart_ajax(request):
+    if request.user.shopping_cart.exists():
+        request.user.clear_cart()
+        return JsonResponse({'success': True, 'message': 'Cart cleared.'})
+    return JsonResponse({'success': False, 'message': 'Cart was already empty.'})
 
 
 

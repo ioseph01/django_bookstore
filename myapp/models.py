@@ -51,6 +51,12 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     
+    def clear_wish_list(self):
+        self.wish_list.clear()
+
+    def clear_cart(self):
+        self.shopping_cart.clear()
+
     def add_tokens(self, amount):
         """Add tokens to user account"""
         self.tokens += amount

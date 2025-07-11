@@ -14,7 +14,9 @@ urlpatterns = [
     path('ajax/add-to-cart/', views.add_to_cart_ajax, name='add_to_cart_ajax'),
     path('ajax/add-to-wishlist/', views.add_to_wishlist_ajax, name='add_to_wishlist_ajax'),
     path('ajax/remove-from-cart/', views.remove_from_cart_ajax, name='remove_from_cart_ajax'),
-    path('ajax/remove-from-wishlist/', views.remove_from_wishlist_ajax, name='remove_from_wishlist_ajax')
+    path('ajax/remove-from-wishlist/', views.remove_from_wishlist_ajax, name='remove_from_wishlist_ajax'),
+    path('ajax/clear-wishlist/', views.clear_wishlist_ajax, name='clear_wishlist_ajax'),
+    path('ajax/clear-cart/', views.clear_cart_ajax, name='clear_cart_ajax')
 ]
 
 

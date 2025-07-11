@@ -14,20 +14,46 @@
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Shopping Cart</button>
         <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Wish List</button>
+        <button class="nav-link" id="nav-history-tab" data-bs-toggle="tab" data-bs-target="#nav-history" type="button" role="tab" aria-controls="nav-history" aria-selected="false">Purchase History</button>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active mx-2 my-4" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0" id="cart-section">
+    <div class="tab-pane fade show active mx-2 my-4 cart-section" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
         {% if cart %}
             <!-- {% for book in cart %}
                 {{ book.title }}
             {% endfor %} -->
+            <div class="row">
+              <div class="col">
+                <button class="btn btn-success btn-md"> 
+                  <!-- onclick="addToCart({{ book.id }}) -->
+                  <i class="fas fa-shopping-cart me-2"></i> Checkout
+                </button>
+              </div>
+              <div class="col">
+                <button class="btn btn-outline-danger btn-md float-end" onclick="clearCart()"> 
+                  <i class="fa-solid fa-trash"></i> Clear Cart
+                </button>
+              </div>
+            </div>
             {% for book in cart %}
             <div class="card my-2" id="cart-book-{{ book.id }}">
               <div class="row">
-                <div class="col-1">
+                <div class="col-2">
                   <div class="card-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="removeFromCart({{ book.id }})"></button>
+                    <div class="btn-group-vertical">
+                      <button class="btn btn-outline-primary btn-sm"> 
+                        <!-- onclick="addToCart({{ book.id }}) -->
+                        Purchase
+                      </button>
+                      <button class="btn btn-outline-warning btn-sm" onclick="addToWishList({{ book.id }})">
+                        Add to Wish List
+                      </button>  
+                      <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart({{ book.id }})"> 
+                        <!-- onclick="addToCart({{ book.id }}) -->
+                        Remove from Cart
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="col-2">
@@ -35,7 +61,7 @@
                     <h3 class="card-title">${{ book.cost|floatformat:2}}</h3>
                   </div>
                 </div>
-                <div class="col-9">
+                <div class="col-8">
                   <div class="card-body">
                       <h5 class="card-title">
                         <a class="link-dark link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="{% url 'book_detail' book.id %}">
@@ -59,23 +85,31 @@
 
         
     </div>
-    <div class="tab-pane fade mx-2 my-4" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
+    <div class="tab-pane fade mx-2 my-4 wishlist-section" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
         {% if wish_list %}
             <!-- {% for book in wish_list %}
                 {{ book.title }}
             {% endfor %} -->
+            <div class="row">
+              <div class="col">
+                  <button class="btn btn-outline-danger btn-md float-end" onclick="clearWishList()"> 
+                    <!-- onclick="addToCart({{ book.id }}) -->
+                    <i class="fa-solid fa-trash"></i> Clear Wishlist
+                  </button>
+              </div>
+            </div>
+            
             {% for book in wish_list %}
             <div class="card my-2" id="wishlist-book-{{ book.id }}">
               <div class="row">
                 <div class="col-2 d-flex justify-content-center">
                   <div class="card-body">
                     <div class="btn-group-vertical">
-                      
-                          <button onclick="addToCart({{ book.id }})" class="btn btn-outline-primary btn-sm">
-    Add To Cart
-</button>
+                      <button onclick="addToCart({{ book.id }})" class="btn btn-outline-primary btn-sm">
+                        Add To Cart
+                      </button>
                       <button class="btn btn-outline-danger btn-sm" onclick="removeFromWishList({{ book.id }})">
-                          Remove
+                        Remove
                       </button>  
                     </div>
                   </div>
@@ -107,6 +141,8 @@
             <span style="color:darkgrey;"><i>Empty List</i></span>
         {% endif %}
     </div>
+    <div class="tab-pane fade mx-2 my-4" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab" tabindex="0"></div>
+    
   </div>
 
 <script>
@@ -114,6 +150,8 @@ const addToCartUrl = "{% url 'add_to_cart_ajax' %}";
 const removeFromCartUrl = "{% url 'remove_from_cart_ajax' %}";
 const removeFromWishListUrl = "{% url 'remove_from_wishlist_ajax' %}";
 const addToWishListUrl = "{% url 'add_to_wishlist_ajax' %}";
+const clearCartUrl = "{% url 'clear_cart_ajax' %}";
+const clearWishListUrl = "{% url 'clear_wishlist_ajax' %}";
 const csrfToken = "{{ csrf_token }}";
 </script>
 <script src="{% static 'dashboard.js' %}"></script>
