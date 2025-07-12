@@ -1,7 +1,7 @@
 
 {% extends "base.html" %}
 {% load static %}
-
+{% load humanize %}
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'book_cover.css' %}"></style>
@@ -11,47 +11,33 @@
 
 <!-- Search Bar -->
 <div class="search-container">
-    <form method="GET" class="search-form">
-        <input 
-            type="text" 
-            name="q" 
-            class="search-input" 
-            placeholder="Search books by title, author, or publisher..." 
-            value="{{ request.GET.q }}"
-            autocomplete="off"
-        >
+    <form method="GET" class="search-form d-flex gap-2 align-items-center flex-wrap">
+           <input 
+                type="text" 
+                name="q" 
+                class="search-input" 
+                placeholder="Search books by title, author, or publisher..." 
+                value="{{ request.GET.q|default_if_none:'' }}"
+                autocomplete="off"
+            >
+        <select name="sort" class="sort-select form-select" style="max-width: 200px;">
+            <option value="" {% if not request.GET.sort %}selected{% endif %}>Sort by</option>
+            <option value="cost_asc" {% if request.GET.sort == 'cost_asc' %}selected{% endif %}>Cost: Low to High</option>
+            <option value="cost_desc" {% if request.GET.sort == 'cost_desc' %}selected{% endif %}>Cost: High to Low</option>
+            <option value="downloads_asc" {% if request.GET.sort == 'downloads_asc' %}selected{% endif %}>Downloads: Low to High</option>
+            <option value="downloads_desc" {% if request.GET.sort == 'downloads_desc' %}selected{% endif %}>Downloads: High to Low</option>
+            <option value="page_count_asc" {% if request.GET.sort == 'page_count_asc' %}selected{% endif %}>Page Count: Low to High</option>
+            <option value="page_count_desc" {% if request.GET.sort == 'page_count_desc' %}selected{% endif %}>Page Count: High to Low</option>
+            <option value="title_asc" {% if request.GET.sort == 'title_asc' %}selected{% endif %}>Title: A to Z</option>
+            <option value="title_desc" {% if request.GET.sort == 'title_desc' %}selected{% endif %}>Title: Z to A</option>
+        </select>
+
         <button type="submit" class="search-btn">Search</button>
         {% if request.GET.q %}
             <a href="{% url 'book_list' %}" class="clear-btn">Clear</a>
         {% endif %}
     </form>
     
-    <!-- Advanced Search Filters -->
-    <!-- <div class="search-filters">
-        <div class="filter-group">
-            <input type="checkbox" name="title_only" id="title_only" class="filter-checkbox" 
-                   {% if request.GET.title_only %}checked{% endif %}>
-            <label for="title_only">Title only</label>
-        </div>
-        <div class="filter-group">
-            <input type="checkbox" name="author_only" id="author_only" class="filter-checkbox"
-                   {% if request.GET.author_only %}checked{% endif %}>
-            <label for="author_only">Author only</label>
-        </div>
-        <div class="filter-group">
-            <input type="checkbox" name="has_cover" id="has_cover" class="filter-checkbox"
-                   {% if request.GET.has_cover %}checked{% endif %}>
-            <label for="has_cover">Has cover image</label>
-        </div>
-    </div>
-</div> -->
-
-<!-- Search Results Info -->
-<!-- {% if request.GET.q %}
-    <div class="search-results">
-        <strong>{{ books|length }}</strong> result{{ books|length|pluralize }} found for "<strong>{{ request.GET.q }}</strong>"
-    </div>
-{% endif %} -->
 
 <!-- Book List -->
 <div class="book-list">
@@ -85,6 +71,8 @@
                 </p>
                 <p><strong>Publisher:</strong> {{ book.publisher }}</p>
                 <p><strong>Pages:</strong> {{ book.page_count }}</p>
+                <p style="color: #2a9d8f;">${{ book.cost|floatformat:2 }}</p>
+                <p>{{ book.downloads|intcomma }} Downloads</p>
             </div>
         </div>
         {% endfor %}
