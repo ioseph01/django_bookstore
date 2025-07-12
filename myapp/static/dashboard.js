@@ -57,7 +57,17 @@ function addToCart(bookId, btn) {
         },
         body: `book_id=${bookId}`
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.redirected) {
+            // Redirect to login page
+            window.location.href = response.url;
+            return; // Stop further processing
+        }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
           if (document.querySelector('.cart-section')) {
@@ -85,7 +95,17 @@ function addToWishList(bookId, btn) {
         },
         body: `book_id=${bookId}`
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.redirected) {
+            // Redirect to login page
+            window.location.href = response.url;
+            return; // Stop further processing
+        }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             if (btn != null) {

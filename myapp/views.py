@@ -3,8 +3,17 @@ from django.db.models import Q
 from .models import Book
 
 # Create your views here.
+
 def home(request):
-    return render(request, "home.html")
+
+    # Get Top 10 books by downloads
+    top_books = Book.objects.order_by('-downloads')[:10]
+    context = {
+        'books': top_books,
+    }
+        
+    return render(request, 'home.html', context)
+
 
 def about(request):
     return render(request, "about.html")

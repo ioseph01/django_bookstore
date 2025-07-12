@@ -43,7 +43,7 @@
     
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mr-3">
       <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'logo_2.png'%}"> The Book Heap</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -61,13 +61,13 @@
         </ul>
       </div>
 
-    <ul class="nav navbar-nav navbar-right navbar-expand-lg">
+    <ul class="nav navbar-nav navbar-right navbar-expand-lg ml-auto">
     {% if user.is_authenticated %}
       <!-- <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
       <li><a href="{% url 'logout' %}">Logout</a></li>
        -->
 
-      <div class="dropdown">
+      <div class="dropdown" style="padding-right: 25px;">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fa-solid fa-user"></i> {{ request.user.username }}
         </button>
@@ -83,9 +83,6 @@
           </li>
         </ul>
       </div>
-
-
-
 
     {% else %}
       <li style="padding-right: 25px;"><a href="{% url 'register' %}"><i class="fa-solid fa-user-plus"></i> Sign Up</a></li>
