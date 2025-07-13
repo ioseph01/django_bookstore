@@ -1,13 +1,16 @@
 {% extends "base.html" %} {% block title %} Home Page {% endblock %}
 {% block content %}
-<p> this is the home page</p>
+
+<div class="">
+    <div class="bg-dark py-2 px-3 text-light">
+        <h1>Welcome to the Book Heap</h1>
+        <p>An online literary archive.</p>
+        <p class="my-3"><a class="text-light" href="{% url 'about' %}">Learn more about us</a></p>
+    </div>
 
 
 
-{% if user.is_authenticated %}
+</div>
 
-{% else %}
-    Welcome, guest!
-{% endif %}
 
 {% endblock %}
