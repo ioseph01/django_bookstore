@@ -3,8 +3,17 @@ from django.db.models import Q
 from .models import Book
 
 # Create your views here.
+
 def home(request):
-    return render(request, "home.html")
+
+    # Get Top 10 books by downloads
+    top_books = Book.objects.order_by('-downloads')[:10]
+    context = {
+        'books': top_books,
+    }
+        
+    return render(request, 'home.html', context)
+
 
 def about(request):
     return render(request, "about.html")
@@ -21,9 +30,15 @@ def book_detail(request, book_id):
     context = {
         'book': book,
         'related_books': related_books,
+        'in_cart': False,
+        'in_wishlist': False
     }
+
     if request.user.is_authenticated:
-        context['cart'] = request.user.get_cart()
+        context['in_cart'] = request.user.shopping_cart.filter(pk=book.pk).exists()
+        context['in_wishlist'] = request.user.wish_list.filter(pk=book.pk).exists()
+        
+        
     return render(request, 'book_detail.html', context)
 
 from django.core.paginator import Paginator
@@ -31,7 +46,8 @@ from django.core.paginator import Paginator
 def book_list(request):
     books = Book.objects.all()
     query = request.GET.get('q')
-    
+    sort = request.GET.get('sort', '')
+
     if query:
         books = books.filter(
             Q(title__icontains=query) | 
@@ -41,14 +57,27 @@ def book_list(request):
             Q(subjects__name__icontains=query)
         ).distinct()  # Remove duplicates from joins
 
+    if sort == 'cost_asc':
+        books = books.order_by('cost')
+    elif sort == 'cost_desc':
+        books = books.order_by('-cost')
+    elif sort == 'downloads_asc':
+        books = books.order_by('downloads')
+    elif sort == 'downloads_desc':
+        books = books.order_by('-downloads')
+    elif sort == 'page_count_asc':
+        books = books.order_by('page_count')
+    elif sort == 'page_count_desc':
+        books = books.order_by('-page_count')
+    elif sort == 'title_asc':
+        books = books.order_by('title')
+    elif sort == 'title_desc':
+        books = books.order_by('-title')
 
     paginator = Paginator(books, 20)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    print(f"Total books: {paginator.count}")
-    print(f"Number of pages: {paginator.num_pages}")
-    print(f"Current page: {page_obj.number}")
 
     return render(request, 'books.html', {
         'page_obj': page_obj,
