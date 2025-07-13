@@ -1,16 +1,103 @@
-{% extends "base.html" %} {% block title %} Home Page {% endblock %}
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Home Page {% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'book_detail.css' %}"></style>
+<div class="bg-dark vh-100 text-light d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
+        
+        <div class="col-md-6 text-start">
+            <h1 class="display-5">Welcome to the Book Heap</h1>
+            <p>An online literary archive.</p>
+            <p class="my-3">
+            <a class="text-light" href="{% url 'about' %}">Learn more about us</a>
+            </p>
+        </div>
+        
+        <!-- Image Column -->
+        <div class="col-md-6 text-center">
+            <img src="{% static 'logo_3.png' %}" class="img-fluid" alt="Logo">
+        </div>
 
-<div class="">
-    <div class="bg-dark py-2 px-3 text-light">
-        <h1>Welcome to the Book Heap</h1>
-        <p>An online literary archive.</p>
-        <p class="my-3"><a class="text-light" href="{% url 'about' %}">Learn more about us</a></p>
+        </div>
     </div>
+</div>
 
+<div class="p-5">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="mb-3">Search Catalog</h1>
+            <p class="text-muted">Discover books in our collection</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Django form using URL name -->
+                <form action="{% url 'book_list' %}" method="GET" class="d-flex gap-2">
+                    <input type="search" class="form-control" name="q" id="bookSearch2" 
+                            placeholder="Search by title, author, publisher, or subject..." 
+                            aria-describedby="searchHelp2" required>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="bg-body-tertiary p-5">
+    <h1 class="mx-5">Top Read Books</h1>
+    <div class="carousel-wrapper mx-5">
+    <button class="btn btn-primary scroll-btn scroll-left"><i class="fa-solid fa-caret-left"></i></button>
+    <div class="book-carousel" id="relatedBookCarousel">
+        {% for book in books %}
+        <div class="card book-card">
+            <a href="{% url 'book_detail' book.id %}">
+            {% if book.cover_image %}
+            <img src="{{ book.cover_image }}" class="card-img-top book-cover-img" alt="{{ book.title }} data-book-id="{{ book.id }}">
+            {% else %}
+            <div class="book-placeholder" data-book-id="{{ book.id }} ">
+                                {{book.title}}
+                            </div>
+            {% endif %}
+            </a>
+
+        </div>
+        {% empty %}
+        {% endfor %}
+    </div>
+        <button class="btn btn-primary scroll-btn scroll-right"><i class="fa-solid fa-caret-right"></i></button>
+    </div>
 
 </div>
 
+
+<footer class="row row-cols-1 row-cols-sm-2 row-cols-md-4 py-5 my-5 border-top px-5 bg-dark text-white">
+      <div class="col-5 mb-6">
+        <h1>Subscribe to the Newsletter</h1>
+        <p> Get site notifications, catalog updates, and monthly exclusive book collections.</p>
+
+      </div>
+      <div class="col-2 mb-6"></div>
+
+      <div class="col-5 mb-6">
+        <h1>Your Email Address: </h1>
+            <input type="search" class="form-control" name="q" 
+                    placeholder="yourname@example.com" 
+                    required>
+            <button class="btn btn-outline-light my-3" type="submit">
+                Sign Up Now
+            </button>
+
+      </div>
+</footer>
+
+
+<script>
+    const relatedCarousel = document.getElementById('relatedBookCarousel');
+    document.querySelectorAll('.scroll-left')[0].onclick = () => relatedCarousel.scrollBy({ left: -200, behavior: 'smooth' });
+    document.querySelectorAll('.scroll-right')[0].onclick = () => relatedCarousel.scrollBy({ left: 200, behavior: 'smooth' });
+</script>
 
 {% endblock %}

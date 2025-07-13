@@ -2,9 +2,9 @@
 {% load static %}
 {% block content %}
 
-    <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
+  <!-- <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
     Added to Cart! Reload to see changes.
-  </div>
+  </div> -->
 
   <div class="container my-5">
 
@@ -19,11 +19,7 @@
   </nav>
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active mx-2 my-4 cart-section" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
-        {% if cart %}
-            <!-- {% for book in cart %}
-                {{ book.title }}
-            {% endfor %} -->
-            <div class="row">
+      <div class="row pb-5">
               <div class="col">
                 <button class="btn btn-success btn-md"> 
                   <!-- onclick="addToCart({{ book.id }}) -->
@@ -36,6 +32,11 @@
                 </button>
               </div>
             </div>
+        {% if cart %}
+            <!-- {% for book in cart %}
+                {{ book.title }}
+            {% endfor %} -->
+            
             {% for book in cart %}
             <div class="card my-2" id="cart-book-{{ book.id }}">
               <div class="row">
@@ -80,7 +81,7 @@
             </div>
             {% endfor %}
         {% else %}
-            <span style="color:darkgrey;"><i>Empty Cart</i></span>
+            <span id="text-empty" style="color:darkgrey;"><i>Empty Cart</i></span>
         {% endif %}
 
         

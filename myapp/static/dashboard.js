@@ -13,12 +13,14 @@ function removeFromCart(bookId, btn) {
        document.getElementById(`cart-book-${bookId}`).remove();
       }
       if (btn != null) {
-              btn.classList.remove("btn-outline-primary");
-              btn.classList.add("btn-primary");
+              btn.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Add from Cart';
+              btn.classList.add("btn-outline-primary");
+              btn.classList.remove("btn-primary");
               btn.onclick = () => addToCart(bookId, btn);
+
             }
     } else {
-      alert("Failed to remove from cart.");
+      // alert("Failed to remove from cart.");
     }
   });
 }
@@ -43,7 +45,7 @@ function removeFromWishList(bookId, btn) {
               btn.onclick = () => addToWishList(bookId, btn);
             }
     } else {
-      alert("Failed to remove from list.");
+      // alert("Failed to remove from list.");
     }
   });
 }
@@ -74,13 +76,23 @@ function addToCart(bookId, btn) {
             // document.getElementById("successAlert").style.display = "block";
             appendBookToCart(data.book)
           }
-            if (btn != null) {
-              console.log("Toggling back to Add to Cart", btn);
+          if (btn != null) {
+            console.log("Toggling back to Add to Cart", btn);
+            btn.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Remove from Cart';
+            btn.classList.add("btn-primary");
+            btn.classList.remove("btn-outline-primary");
+            btn.onclick = () => removeFromCart(bookId, btn);
+          }
+          const section = document.querySelector('.cart-section');
 
-              btn.classList.remove("btn-primary");
-              btn.classList.add("btn-outline-primary");
-              btn.onclick = () => removeFromCart(bookId, btn);
-            }
+          if (section) {
+            const spans = section.querySelectorAll('span');
+            spans.forEach(span => {
+              if (span.textContent.trim() === 'Empty Cart') {
+                span.remove();
+              }
+            });
+          }
          
         }
     });
@@ -114,11 +126,10 @@ function addToWishList(bookId, btn) {
               btn.onclick = () => removeFromWishList(bookId, btn);
             }
             if (document.querySelector('.wishlist-section')) {
-              console.log('HEYEY')
               appendBookToWishList(data.book)
             }
         } else {
-            alert("Error: " + data.message);
+            // alert("Error: " + data.message);
         }
     });
 }
@@ -161,13 +172,7 @@ function clearWishList() {
 function appendBookToWishList(book) {
   const wishlistSection = document.querySelector('.wishlist-section')
   const cardHTML = `<div class="row">
-              <div class="col">
-                  <button class="btn btn-outline-danger btn-md float-end" onclick="clearWishList()"> 
-                    <!-- onclick="addToCart(${book.id}) -->
-                    <i class="fa-solid fa-trash"></i> Clear Wishlist
-                  </button>
-              </div>
-            </div>
+           
             
             <div class="card my-2" id="wishlist-book-${book.id}">
               <div class="row">

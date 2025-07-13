@@ -30,9 +30,15 @@ def book_detail(request, book_id):
     context = {
         'book': book,
         'related_books': related_books,
+        'in_cart': False,
+        'in_wishlist': False
     }
+
     if request.user.is_authenticated:
-        context['cart'] = request.user.get_cart()
+        context['in_cart'] = request.user.shopping_cart.filter(pk=book.pk).exists()
+        context['in_wishlist'] = request.user.wish_list.filter(pk=book.pk).exists()
+        
+        
     return render(request, 'book_detail.html', context)
 
 from django.core.paginator import Paginator

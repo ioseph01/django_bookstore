@@ -36,14 +36,28 @@
                 <p><strong>Downloads: </strong>{{ book.downloads|intcomma }}</p>
                 
                 <p class="price">${{ book.cost|floatformat:2}} 
-
                 <div class="d-grid gap-2 d-md-block">
-                    <button class="btn btn-primary btn-lg me-2" onclick="addToCart({{ book.id }}, this)">
+                {% if in_cart %}
+                    <button class="btn btn-primary btn-lg me-2" onclick="removeFromCart({{ book.id }}, this)">
+                        <i class="fas fa-shopping-cart me-2"></i>Remove From Cart
+                    </button>
+                {% else %}
+                    <button class="btn btn-outline-primary btn-lg me-2" onclick="addToCart({{ book.id }}, this)">
                         <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                     </button>
+                {% endif %}
+
+                {% if in_wishlist %}
+                    <button class="btn btn-danger btn-lg" onclick="removeFromWishList({{ book.id }}, this)">
+                        <i class="fas fa-heart me-2"></i>Wishlist
+                    </button>
+                {% else %}
                     <button class="btn btn-outline-danger btn-lg" onclick="addToWishList({{ book.id }}, this)">
                         <i class="fas fa-heart me-2"></i>Wishlist
                     </button>
+                {% endif %}
+                    
+                   
                 </div>
 
                 <h4 class="price pt-5">Other Info</h4>
