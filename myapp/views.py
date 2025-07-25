@@ -83,7 +83,7 @@ def book_list(request):
         'page_obj': page_obj,
         'books': page_obj,
         'query': query,
-        
+        'sort': sort
     })
 
 
